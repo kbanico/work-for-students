@@ -1,3 +1,28 @@
+## May 29
+
+Jesci:
+
+Dragon dash complete level 21
+
+Warm up
+https://studio.code.org/s/course2/stage/10/puzzle/1
+
+Next Lesson
+https://www.tynker.com/hour-of-code/debugger
+
+
+Jack:
+Warm Up
+https://studio.code.org/s/course2/stage/8/puzzle/1
+
+The continue on with goblin quest
+
+
+
+
+
+
+
 May 22
 warm up
 https://studio.code.org/s/course2/stage/8/puzzle/1
