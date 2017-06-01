@@ -1,3 +1,17 @@
+## June 1
+
+### Jack:
+
+- Todays Warm up
+* https://studio.code.org/s/course2/stage/11/puzzle/1
+
+- Previous Homework
+* https://studio.code.org/s/course2/stage/10/puzzle/1
+
+
+
+
+
 ## May 29
 
 ### Jesci:
