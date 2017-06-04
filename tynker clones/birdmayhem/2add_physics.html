@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bird Mayhem</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+<script>
+    var gameState = {
+        preload:function(){
+            game.load.image("zombie","zombie.png");
+        },
+        
+        create(){
+            //Add Physics
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            
+            //Add gravity to the world
+            game.physics.arcade.gravity.y = 100;
+            
+            //Enable Physics on the zombie
+            this.zombie = game.add.sprite(80,0,"zombie");
+            game.physics.enable(this.zombie);
+        },
+        
+        update:function(){
+            
+        }
+    }
+
+    var game = new Phaser.Game(800,600,Phaser.AUTO);
+    game.state.add("game",gameState);
+    game.state.start("game");
+</script>
+</body>
+</html>

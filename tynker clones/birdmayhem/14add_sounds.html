@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bird Mayhem</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+<script>
+    var gameState = {
+        preload:function(){
+            game.load.image("zombie","zombie.png");
+            game.load.image("background","background.png");
+            game.load.audio("mario","mario.mp3");
+        },
+        
+        create(){
+            //Add Physics
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            
+            //Add gravity to the world
+            game.physics.arcade.gravity.y = 100;
+
+            
+            //Add a background to the game
+            this.background = game.add.sprite(0,0,"background");
+            
+            //Make the background fit the screen
+            this.background.height = game.height;
+            this.background.width = game.width;
+            
+            //Enable Physics on the zombie
+            this.zombie = game.add.sprite(80,0,"zombie");
+            game.physics.enable(this.zombie);
+            this.zombie.anchor.setTo(0.5)
+            //Make the zombie collide the walls of the world
+            this.zombie.body.collideWorldBounds = true;
+            
+            //Add a little bounce when it hits the walls
+            this.zombie.body.bounce.x = 0.8;
+            this.zombie.body.bounce.y = 0.8;
+            //This gets it moving to the right
+            this.zombie.body.velocity.setTo(200,200);
+            
+            //Add angular velocity
+            // Have student change values to see how fast it goes
+            this.zombie.body.angularVelocity = 500;
+            
+            // Prevent the zombie from spinning forever
+            this.zombie.body.angularDrag = 50;
+            
+            //Make the sprite clickable
+            this.zombie.inputEnabled = true;
+            this.zombie.events.onInputDown.add(this.makeClone,this);
+            
+            //Make a clone group
+            this.clones = game.add.group();
+            
+            //Add background music
+            this.music = game.add.audio('mario');
+            this.music.play();
+            
+        },
+        
+        update:function(){
+            // Make the clones bounce off each other
+            game.physics.arcade.collide(this.clones)
+            
+            //Add a timer to remove the clone after 5 seconds
+            this.clones.forEach(function(element){
+                game.time.events.add(5000,function(){element.destroy();},this);
+            },this)
+            
+        },
+        
+        makeClone:function(sprite,event){
+            console.log("clicked")
+            //We need to set a variable to add to the group
+            var clone = game.add.sprite(event.position.x,event.position.y,sprite.key);
+            
+            // Add physics to the clone
+            game.physics.enable(clone);
+            clone.anchor.setTo(0.5);
+            clone.body.collideWorldBounds = true;
+            
+            //Add bounce to the clones
+            clone.body.bounce.x = 0.8;
+            clone.body.bounce.y = 0.8;
+            
+            //Make it start moving
+            clone.body.velocity.setTo(200,200);
+            
+            //Add angular Velocity to make it spin
+            clone.body.angularVelocity = 100;
+            
+            //Make the clone clickable
+            clone.inputEnabled = true;
+            clone.events.onInputDown.add(this.makeClone,this);
+            
+            
+            //Add the clone to the group(maybe show on the console how many it has);
+            this.clones.add(clone);   
+        }
+    }
+
+    var game = new Phaser.Game(800,600,Phaser.AUTO);
+    game.state.add("game",gameState);
+    game.state.start("game");
+</script>
+</body>
+</html>
