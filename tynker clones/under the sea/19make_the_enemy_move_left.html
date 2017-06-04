@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bird Mayhem</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+<script>
+    var gameState = {
+        preload:function(){
+            game.load.image("background","background.png");
+            game.load.image("pikachu","pikachu.png");
+            
+            //add enemy spritesheet
+            game.load.spritesheet("enemy","enemy.png",113,100);
+            
+            //add the bullet image
+            game.load.image("bullet","sword.png")
+            
+            //add the sound
+            game.load.audio("attack","Attack.mp3");
+            
+        },
+        
+        create(){
+            //Add physics
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            
+            //Add a background
+            this.background = game.add.sprite(0,0,"background");
+            //Make background fit the screen
+            this.background.height = game.height;
+            this.background.width = game.width;
+            
+            //Add a hero to the game
+            this.player = game.add.sprite(100,100,"pikachu");
+            
+            //Add physics to the hero
+            game.physics.arcade.enable(this.player);
+            
+            //make the player collide the world bounds
+            this.player.body.collideWorldBounds = true;
+            
+            //Make the player bounce
+            this.player.body.bounce.y = 0.8;
+            
+            
+            // change the position its facing
+            this.player.scale.setTo(-1,1);
+            
+            // add keyboard arrow keys
+            this.cursors = game.input.keyboard.createCursorKeys();
+            
+            //add and enemy
+            this.enemy = game.add.sprite(400,100,"enemy");
+            
+            //Add animations to enemy
+            this.enemy.animations.add("walk",[0,1,2,3,4,5,6,7,8,9,10]);
+            this.enemy.animations.play("walk",10,true);
+            
+            
+            //make a bullet group
+            this.bullets = game.add.group();
+             // we enable physics to the bullets
+            this.bullets.enableBody = true;
+            // we create only 5 bullets
+            this.bullets.createMultiple(5,"bullet");
+           
+            
+            //add the ability to use the space bar to shoot
+            this.spacebar =  game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            //shoot a bullet when we press the spacebar
+            this.spacebar.onDown.add(this.shootBullet,this);
+            
+            //Add bullet sound
+            this.attackSound = game.add.audio("attack");
+            
+            //Make a group of enemies
+            this.enemies = game.add.group()
+            this.enemies.enableBody = true;
+            this.enemies.createMultiple(10,"enemy");
+            
+            //Make a timer to make the enemies appear on the screen
+            game.time.events.loop(Math.floor(Math.random()*5) * 1000,this.createEnemy,this);
+            
+            
+        },
+        
+        update:function(){
+            //make sure the player has physics
+            if(this.cursors.up.isDown){
+                this.player.body.velocity.y = -200;
+            }
+            
+            if(this.cursors.down.isDown){
+                this.player.body.velocity.y = 200;
+            }
+            
+            
+        },
+        shootBullet:function(){
+            // make sure to load the asset for the bullet
+            console.log("PEW PEW")
+            // Retrive a bullet from the bullets group
+            var bullet = this.bullets.getFirstDead();
+            if(bullet == false){
+                return;
+            }
+            // Initiate the bullet
+            bullet.reset(this.player.x/2,this.player.y)
+            
+            //play the bullet sound
+            this.attackSound.play()
+            bullet.body.velocity.x = 200;
+            
+            //kill the bullet when it leaves the world
+            bullet.checkWorldBounds = true;
+            bullet.outOfBoundsKill = true;
+        },
+        createEnemy:function(){
+            console.log("ENemy created")
+            // retieve an enemy from the enimes group
+            var enemy = this.enemies.getFirstDead();
+            if(enemy == false){
+                return;
+            }
+            
+            // Init the enemy
+            enemy.reset(game.width-100,Math.floor(Math.random()*game.height-100));
+            enemy.body.velocity.x = -1 *(Math.floor(Math.random()*250) + 150);
+            
+//            enemy.body.velocity.x = -250;
+            
+            
+        }
+        
+    }
+
+    var game = new Phaser.Game(800,600,Phaser.AUTO);
+    game.state.add("game",gameState);
+    game.state.start("game");
+</script>
+</body>
+</html>
