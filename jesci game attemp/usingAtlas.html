@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jesci Game Attempt</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+<script>
+    var gameState = {
+        preload:function(){
+           game.load.atlasJSONArray("mysprite","assets/spritesheet.png","assets/sprites.json")
+            
+        },
+        
+        create(){
+            this.mainSprite=this.game.add.sprite(this.game.world.centerX,300,"mysprite","shipPink_manned");
+            this.mainSprite.anchor.setTo(0.5);
+            
+            this.headSprite = null;
+            this.backOfSprite = null;
+            this.feet = null;
+            
+            this.createButtons();
+            
+        },
+        
+        update:function(){
+            
+        },
+        createButtons:function(){
+            this.firstButton = this.game.add.sprite(100,100,"mysprite","shipYellow_manned")
+            this.firstButton.anchor.setTo(0.5)
+            this.firstButton.inputEnabled = true;
+            this.firstButton.events.onInputDown.add(this.pickItem,this);
+            
+            this.secondButton = this.game.add.sprite(200,100,"mysprite","dome");
+            this.secondButton.anchor.setTo(0.5);
+            this.secondButton.inputEnabled = true;
+            this.secondButton.events.onInputDown.add(this.addHead,this);
+            
+            this.thirdButton = this.game.add.sprite(350,100,"mysprite","laserBlue_burst");
+            this.thirdButton.anchor.setTo(0.5);
+            this.thirdButton.inputEnabled = true;
+            this.thirdButton.events.onInputDown.add(this.addBurst,this);
+            
+            this.fourthButton = this.game.add.sprite(450,100,"mysprite","laserGreen2");
+            this.fourthButton.anchor.setTo(0.5);
+            this.fourthButton.inputEnabled = true;
+            this.fourthButton.events.onInputDown.add(this.addFeet,this);
+            
+            
+        },
+        pickItem(sprite,event){
+            console.log(sprite)
+            sprite.alpha= 0.4
+            newSprite = this.game.add.sprite(this.mainSprite.x,this.mainSprite.y,"mysprite",sprite._frame.name)
+            newSprite.anchor.setTo(0.5);
+            this.mainSprite.kill();
+            this.mainSprite = newSprite;
+            this.mainSprite.name = "yellowSprite"
+        },
+        addHead:function(sprite,event){
+            console.log("clicked")
+            sprite.alpha = 0.4;
+            newSprite = this.game.add.sprite(this.mainSprite.x,this.mainSprite.y-30,"mysprite",sprite._frame.name);
+            newSprite.anchor.setTo(0.5);
+            if(this.headSprite != null){
+                this.headSprite.kill();
+            }
+            this.headSprite = newSprite;
+        },
+        
+        addBurst:function(sprite,event){
+            sprite.alpha = 0.4;
+            newSprite = this.game.add.sprite(this.mainSprite.x+30,this.mainSprite.y-20,"mysprite",sprite._frame.name);
+            newSprite.anchor.setTo(0.5);
+            newSprite.sendToBack();
+            if(this.backOfSprite != null){
+                this.backOfSprite.kill();
+            }
+            this.backOfSprite = newSprite;
+        },
+        addFeet:function(sprite,event){
+            sprite.alpha = 0.4;
+            newSprite = this.game.add.sprite(this.mainSprite.x,this.mainSprite.y+90,"mysprite",sprite._frame.name);
+            newSprite.anchor.setTo(0.5);
+            newSprite.sendToBack();
+            if(this.feet != null){
+                this.feet.kill();
+            }
+            this.feet = newSprite;
+        }
+    }
+
+    var game = new Phaser.Game(800,600,Phaser.AUTO);
+    game.state.add("game",gameState);
+    game.state.start("game");
+</script>
+</body>
+</html>
