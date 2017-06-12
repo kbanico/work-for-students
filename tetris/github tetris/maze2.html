@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="myCanvas" width = "1000" height = "600"></canvas>
+    <button onclick = "solveMaze()">Solve!</button>
+    <button onclick = "reset()">Reset</button>
+    <p id="outcome"></p>
+    <script>
+        var canvas;
+        var ctx; 
+        var output;
+        
+        var tileW = 20;
+        var tileH = 20;
+        var tileRowCount = 25;
+        var tileColumnCount = 40;
+        
+        //variables to prevent the movemove function from goin crazy
+        var boundX = 0;
+        var boundY = 0
+        
+        var tiles = [];
+        for(var i = 0; i < tileColumnCount; i++){
+            tiles[i] = []
+            for(var j = 0; j < tileRowCount; j++){
+                tiles[i][j] = {x: i *(tileW + 3), y: j * (tileH + 3), state: "e"}; // e is empty
+            }
+        }
+        
+        tiles[0][0].state = "s"
+        tiles[tileColumnCount-1][tileRowCount-1].state = "f"
+        
+        function rect(x,y,w,h,state){
+            if(state == "s"){
+               ctx.fillStyle = "#00FF00"; 
+            }else if(state == "f"){
+                ctx.fillStyle = "#ff0000";
+            }else if(state == "e"){
+                ctx.fillStyle = "#AAAAAA";
+            }else if(state == "w"){
+                ctx.fillStyle = "#0000FF";
+            }else if(state == "x"){
+                ctx.fillStyle = "#000000"
+            }else{
+                ctx.fillStyle = "#fff000"
+            }
+            
+            ctx.fillRect(x,y,w,h)
+        }
+        
+        function clear(){
+            ctx.clearRect(0,0,canvas.width,canvas.height)
+        }
+        
+        function draw(){
+            clear();
+            // run through all the tiles
+            for(var i = 0; i < tileColumnCount; i++){
+                for(var j = 0; j < tileRowCount; j++){
+                    rect(tiles[i][j].x, tiles[i][j].y, tileW,tileH, tiles[i][j].state)
+                }
+            }
+        }
+        
+        function solveMaze(){
+            //begin at the start tiles[0][0]
+            var Xqueue = [0];
+            var Yqueue = [0];
+            
+            var pathFound = false;
+            var xLoc;
+            var yLoc;
+            
+            // as long as we can explore
+            // at first we explore [0][0]
+            while(Xqueue.length > 0 && !pathFound){
+                // we get the first location [0] for x and [0] for y
+                xLoc = Xqueue.shift();
+                yLoc = Yqueue.shift();
+                
+                // not at the edge
+                if(xLoc > 0){
+                    // to the left of the tile
+                    // check if we are done
+                    if(tiles[xLoc - 1][yLoc].state == "f"){
+                        pathFound = true;
+                    }
+                     
+                }
+                
+                // if not at the very edge we can check up to the right
+                if(xLoc < tileColumnCount - 1){
+                    //tiles at the right
+                    if(tiles[xLoc + 1][yLoc].state == "f"){
+                        pathFound = true;
+                    }
+                }
+                
+                //Y LOCATION
+                // not at the edge
+                if(yLoc > 0){
+                    // to the left of the tile
+                    // check if we are done
+                    if(tiles[xLoc][yLoc - 1].state == "f"){
+                        pathFound = true;
+                    }
+                     
+                }
+                
+                // if not at the very edge we can check up to the right
+                if(yLoc < tileRowCount - 1){
+                    //tiles at the right
+                    if(tiles[xLoc][yLoc + 1].state == "f"){
+                        pathFound = true;
+                    }
+                }
+                
+                
+                
+                
+                //IF ITS NOT EMPTY
+                // not at the edge
+                if(xLoc > 0){
+                    // to the left of the tile
+                    // check if we are done
+                    if(tiles[xLoc - 1][yLoc].state == "e"){
+                        Xqueue.push(xLoc-1);
+                        Yqueue.push(yLoc);
+                        tiles[xLoc-1][yLoc].state = tiles[xLoc][yLoc].state + "l"
+                    }
+                     
+                }
+                
+                // if not at the very edge we can check up to the right
+                if(xLoc < tileColumnCount - 1){
+                    //tiles at the right
+                    if(tiles[xLoc + 1][yLoc].state == "e"){
+                        Xqueue.push(xLoc+1);
+                        Yqueue.push(yLoc);
+                        tiles[xLoc+1][yLoc].state = tiles[xLoc][yLoc].state + "r"
+                    }
+                }
+                
+                //Y LOCATION
+                // not at the edge
+                if(yLoc > 0){
+                    // to the left of the tile
+                    // check if we are done
+                    if(tiles[xLoc][yLoc - 1].state == "e"){
+                        Xqueue.push(xLoc);
+                        Yqueue.push(yLoc - 1);
+                        tiles[xLoc][yLoc - 1].state = tiles[xLoc][yLoc].state + "u"
+                    }
+                     
+                }
+                
+                // if not at the very edge we can check up to the right
+                if(yLoc < tileRowCount - 1){
+                    //tiles at the right
+                    if(tiles[xLoc][yLoc + 1].state == "e"){
+                        Xqueue.push(xLoc);
+                        Yqueue.push(yLoc + 1);
+                        tiles[xLoc][yLoc + 1].state = tiles[xLoc][yLoc].state + "d"
+                    }
+                }
+                
+                
+            }
+            
+            if(!pathFound){
+                output.innerHTML = "No solution"
+            }else{
+                output.innerHTML = "SOLVED"
+                var path = tiles[xLoc][yLoc].state;
+                var pathLength = path.length;
+                var currX = 0
+                var currY = 0;
+                for(var i = 0; i < pathLength - 1; i++){
+                    if(path.charAt(i + 1) == "u"){
+                        currY-=1;
+                    }
+                    if(path.charAt(i+1) == "d"){
+                        currY+=1;
+                    }
+                    
+                    if(path.charAt(i + 1) == "r"){
+                        currX+=1;
+                    }
+                    
+                    if(path.charAt(i + 1) == "l"){
+                        currX-=1;
+                    }
+                    tiles[currX][currY].state = "x";
+                }
+                console.log(path)
+                console.log(pathLength)
+            }
+            
+        }
+        
+        function reset(){
+            for(var i = 0; i < tileColumnCount; i++){
+                tiles[i] = []
+                for(var j = 0; j < tileRowCount; j++){
+                    tiles[i][j] = {x: i *(tileW + 3), y: j * (tileH + 3), state: "e"}; // e is empty
+                }
+            }
+
+            tiles[0][0].state = "s"
+            tiles[tileColumnCount-1][tileRowCount-1].state = "f"
+            output.innerHTML = ""
+
+        }
+        
+        function init(){
+            canvas = document.getElementById("myCanvas");
+            ctx = canvas.getContext("2d")
+            output = document.getElementById("outcome");
+            // we want to draw this over and over again
+            setInterval(draw,10)
+        }
+        
+        function myMove(e){
+            //offset the canvas
+            x = e.pageX - canvas.offsetLeft;
+            y = e.pageY - canvas.offsetTop;
+            
+            // if we clicked on a tile
+            for(var i = 0; i < tileColumnCount; i++){
+                for(var j = 0; j < tileRowCount; j++){
+                    if(i * (tileW + 3) < x && x < i*(tileW + 3) + tileW && j * (tileH + 3) < y && y < j *(tileH + 3) + tileW){
+                        // we clicked on the tile so change tht state
+                        if(tiles[i][j].state == "e" && (i != boundX) || (j != boundY)){
+                            tiles[i][j].state = "w";
+                            //kepping track of what we clicked
+                            boundX = i;
+                            boundX = j;
+                        }else if(tiles[i][j].state == "w"  && (i != boundX) || (j != boundY)){
+                            tiles[i][j].state = "e";
+                            //kepping track of what we clicked
+                            boundX = i;
+                            boundX = j;
+                        }
+                        
+                        
+                        
+                    }
+                }
+                
+            }
+        }
+        
+        function myDown(e){
+            
+            canvas.onmousemove = myMove;
+            
+            //offset the canvas
+            x = e.pageX - canvas.offsetLeft;
+            y = e.pageY - canvas.offsetTop;
+            
+            // if we clicked on a tile
+            for(var i = 0; i < tileColumnCount; i++){
+                for(var j = 0; j < tileRowCount; j++){
+                    if(i * (tileW + 3) < x && x < i*(tileW + 3) + tileW && j * (tileH + 3) < y && y < j *(tileH + 3) + tileW){
+                        // we clicked on the tile so change tht state
+                        if(tiles[i][j].state == "e"){
+                            tiles[i][j].state = "w";
+                            
+                            // keeps track of the row and col that we clicked
+                            boundX = i;
+                            boundX = j;
+                            
+                        }else if(tiles[i][j].state == "w"){
+                            tiles[i][j].state = "e";
+                            boundX = i;
+                            boundX = j;
+                        }
+                        
+                        
+                        
+                    }
+                }
+                
+            }
+            
+        }
+        
+        //when mouse is up
+        function myUp(){
+            // removing the myMove function when mouse is up
+            canvas.onmousemove = null;
+        }
+        
+        //initialize script
+        init();
+        
+        //user interact with the program
+        canvas.onmousedown = myDown;
+        canvas.onmouseup = myUp;
+    </script>
+</body>
+</html>

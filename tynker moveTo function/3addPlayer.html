@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+   <script>
+       
+       var GameState = {
+           preload:function(){
+               game.load.image("background","background.jpg")
+               game.load.image("player","player.png")
+           },
+           create:function(){
+               //add background
+               this.background = game.add.sprite(0,0,"background");
+               
+               //make background fit
+               this.background.height = game.height;
+               this.background.width = game.width;
+               
+               //add player
+               this.player = game.add.sprite(100,this.game.world.height - 150,"player");
+               this.player.anchor.setTo(0.5)
+               
+           },
+           update:function(){
+
+           }
+       }
+       
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>

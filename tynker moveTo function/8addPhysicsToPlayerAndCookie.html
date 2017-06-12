@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+  <button id="moveForward" onclick="GameState.forwardTween()">MOVE FORWARD</button>
+   <script>
+       
+       var GameState = {
+           preload:function(){
+               game.load.image("background","background.jpg");
+               game.load.image("player","player.png");
+               game.load.image("cookie","cookie.png")
+           },
+           create:function(){
+               //add physics
+               game.physics.startSystem(Phaser.Physics.ARCADE);
+               
+               //add background
+               this.background = game.add.sprite(0,0,"background");
+               
+               //make background fit
+               this.background.height = game.height;
+               this.background.width = game.width;
+               
+               //add player
+               this.player = game.add.sprite(100,this.game.world.height - 150,"player");
+               this.player.anchor.setTo(0.5);
+               
+               //enable physics on player
+               game.physics.arcade.enable(this.player);
+               
+               //Add a cookie checkpoint
+               this.cookie = game.add.sprite(game.world.width-100,game.world.height - 120,"cookie");
+               this.cookie.anchor.setTo(0.5)
+               
+               //enable physics on cookie
+               game.physics.arcade.enable(this.cookie);           },
+           update:function(){
+
+           },
+           forward:function(){
+               this.player.x += 100;
+           },
+           forwardTween:function(){
+               this.game.add.tween(this.player).to({x:this.player.x+100},500).start()
+           }
+       }
+       
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>
