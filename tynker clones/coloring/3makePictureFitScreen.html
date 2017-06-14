@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+   <script>
+       
+       var GameState = {
+           preload:function(){
+               //load the image
+               game.load.image("picture","pony.jpg");
+              
+           },
+           create:function(){
+             //add the image to the screen
+               this.picture = game.add.sprite(0,0,"picture")
+            
+            //make the photo fit the whole screen
+               this.picture.width = 800;
+               this.picture.height = 600;
+               
+           },
+           update:function(){
+
+           }
+       }
+       
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>

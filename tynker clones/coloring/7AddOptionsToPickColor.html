@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+
+  Select your favorite color:
+  <input onchange="GameState.setColor();" id="color" type="color" name="favcolor" value="#ff0000">
+
+
+   <script>
+      
+       
+       var GameState = {
+           preload:function(){
+               //load the image
+               game.load.image("picture","pony.jpg");
+              
+           },
+           create:function(){
+             //add the image to the screen
+               this.picture = game.add.sprite(0,0,"picture")
+            
+            //make the photo fit the whole screen
+               this.picture.width = 800;
+               this.picture.height = 600;
+               
+            //Add a canvas or a paint area to the game
+               this.bmd = game.add.bitmapData(800, 600);
+               this.bmd.ctx.fillStyle = "#000";
+               this.bmd.ctx.fillRect(0,0,800,600);
+               this.bmd.alpha = 0;
+               
+            //Add graphics so we can draw circles
+               this.graphics = game.add.graphics(0, 0);
+               
+            
+            // set a current color
+            // Current Color for the circle is red for now
+               this.currentColor = "0xFF0000"
+               
+                     
+
+               
+           },
+           update:function(){
+               // draw a red circle if we are clicking on the screen
+               if(game.input.activePointer.isDown){
+                   pointer = game.input.activePointer
+                   this.paint(pointer);
+               }
+           },
+           paint:function(pointer){
+               this.graphics.beginFill(this.currentColor,1);
+               this.graphics.drawCircle(pointer.x,pointer.y,30); 
+               
+               
+           },
+           setColor:function(){
+               //Grap the value from the color picker
+               var newColor = document.getElementById("color").value
+               //remove the first character from the string
+               //And set this.currentColor to the new Color
+               this.currentColor="0x" + newColor.slice(1,newColor.length)
+     
+               
+           }
+       };
+       
+           currentColor = document.getElementById("color");
+    console.log(currentColor.value)
+       
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>

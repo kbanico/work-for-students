@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+
+  Select your favorite color:
+  <input onchange="GameState.setColor();" id="color" type="color" name="favcolor" value="#ff0000">
+
+
+   <script>
+           
+       var GameState = {
+           preload:function(){
+               game.load.image('pic', 'pony.jpg');
+           },
+           create:function(){
+               // Add the coloring book background
+               this.backround = game.add.sprite(0,0,"pic");
+               //Make it fit in the whole screen area
+               this.backround.width = game.width;
+               this.backround.height = game.height;
+               
+               //make a paper to draw on
+               this.paper = game.make.bitmapData(800,600);
+               //add the paper to the game
+               this.paper.addToWorld();
+               
+               //lets make a circle to act like a pen
+               this.pen = game.make.bitmapData(64,64);
+               this.pen.circle(32,32,22,"rgba(255,0,255,0.2)");
+               
+               //we want to check if we are moving the mouse
+               game.input.addMoveCallback(this.paint,this);
+           },
+           paint:function(pointer,x,y){
+               if(pointer.isDown){
+                   this.paper.draw(this.pen,x-16,y-16)
+               }
+           }
+       }
+
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>
