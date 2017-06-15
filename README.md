@@ -1,3 +1,15 @@
+## June 15
+-Todays Warm up
+### Jesci: 
+- http://silentteacher.toxicode.fr/hourofcode
+- counter hack
+
+### Jack
+-hotwheels
+-goblin quest
+
+
+
 ## June 1
 
 ### Jack:

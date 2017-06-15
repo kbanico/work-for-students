@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bird Mayhem</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+<script>
+    var gameState = {
+        preload:function(){
+           game.load.image("yankee doodle","zombie.png")
+           game.load.image("irrating kennth","background.png")
+           game.load.audio("ridge stone","mario.mp3")
+           
+        },
+        
+        create(){
+          this.background = game.add.sprite(0,0,"irrating kennth")
+          this.background.width = 800
+          this.background.height = 600
+          game.physics.startSystem(Phaser.Physics.ARCADE);
+          game.physics.arcade.gravity.y = 100
+           this.yankeeDoodle = game.add.sprite(10,10,"yankee doodle")
+           game.physics.enable(this.yankeeDoodle)
+           this.yankeeDoodle.anchor.setTo(0.5)
+           this.yankeeDoodle.body.collideWorldBounds = true
+           this.yankeeDoodle.body.bounce.y =0.8
+           this.yankeeDoodle.body.angularVelocity =100
+           this.yankeeDoodle.inputEnabled = true
+           this.yankeeDoodle.events.onInputDown.add(this.makeClone,this)
+           
+           this.killerclownkennth = game.add.group();
+           this.whatever = game.add.audio('ridge stone')
+           this.whatever.play()
+        },
+        
+        update:function(){
+          game.physics.arcade.collide(this.killerclownkennth)
+          this.killerclownkennth.forEach(function(kids){
+            game.time.events.add(5000,function(){kids.destroy();},this)
+          },this)
+          
+            
+        },
+      
+      makeClone:function(sprite,event){
+            console.log("clicked")
+            var clone = game.add.sprite(event.position.x,event.position.y,sprite.key)
+           
+            game.physics.enable(clone);
+            clone.anchor.setTo(0.5);
+            clone.body.collideWorldBounds = true;
+            clone.body.bounce.x = 0.8;
+            clone.body.bounce.y = 0.8
+            clone.body.velocity.setTo(200,200);
+            clone.inputEnabled = true;
+            clone.events.onInputDown.add(this.makeClone,this);
+            clone.body.angularVelocity = 100
+           
+            this.killerclownkennth.add(clone)
+    }
+    }
+
+    var game = new Phaser.Game(800,600,Phaser.AUTO);
+    game.state.add("game",gameState);
+    game.state.start("game");
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candy</title>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //Load the background image
+                game.load.image("background", "background.png");
+                
+                //Load the floor
+                game.load.image("floor","floor.png");
+                
+                //load the monster
+                game.load.image("monster","monster.png")
+                
+                 //load the candy note this is a spritesheet
+                //82 is the with of each candy
+                //98 is the height of each candy
+                game.load.spritesheet("candy","candy.png",82,98);
+                
+                
+            },
+            create:function(){
+                //Add a background to our game
+                this.background = game.add.sprite(0,0,"background");
+                
+                //Add the floor to the game
+                this.floor = game.add.sprite(-30,800,"floor")
+                
+                //Add the monster
+                this.monster = game.add.sprite(5,760,"monster")
+                
+                //Add A Single Candy (we will be removing this later)
+                this.candy = game.add.sprite(100,100,"candy")
+                
+                //Lets change it to another type of candy
+                this.candy.frame = 2;
+                
+                //Add Physics so we can have the candy fall
+                game.physics.startSystem(Phaser.Physics.ARCADE);
+                //Add gravity to the y position
+                game.physics.arcade.gravity.y = 200;
+                
+                //Add physics to the candy
+                game.physics.arcade.enable(this.candy);
+                
+                //Add physics to the floor
+                game.physics.arcade.enable(this.floor)
+                
+                //remove gravity from the floor
+                //so that it won't fall off the game
+                this.floor.body.allowGravity = false;
+                
+                
+            },
+            update:function(){
+                
+            }
+        }
+        
+        var game = new Phaser.Game(640,960,Phaser.AUTO);
+        
+        //adding a game state
+        game.state.add("game", Game);
+        
+        //lets start the game
+        game.state.start("game")
+        
+        
+        
+    </script>
+</body>
+</html>

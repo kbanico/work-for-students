@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Move</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+   <script>
+       
+       var GameState = {
+           preload:function(){
+            game.load.image('pic','pony.jpg');
+              
+           },
+           create:function(){
+               this.miles = game.add.sprite(0,0,"pic");
+               this.miles.height = 600
+               this.miles.width = 800
+               this.instagram = game.make.bitmapData(800,600)
+               this.instagram.addToWorld()
+               this.pen = game.make.bitmapData(64,64)
+               game.input.addMoveCallback(this.paint,this)
+               this.currentColor ="rgba(255,0,255,0.2)"
+             
+               
+           },
+           update:function(){
+               
+
+           },
+           paint:function(pointer,x,y){
+               this.pen.circle(32,32,10,this.currentColor)
+               if(pointer.isDown){
+                   this.instagram.draw(this.pen,x-26,y-26)
+               }
+           }
+    
+       }
+       
+       
+       var game = new Phaser.Game(800,600,Phaser.AUTO);
+       game.state.add("gameState",GameState);
+       game.state.start("gameState")
+    </script>
+    
+</body>
+</html>
