@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candy</title>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //load the outfits
+                game.load.image("base","zoe/outfit/base.png");
+                game.load.image("outfit0","zoe/outfit/0.png");
+                game.load.image("outfit1","zoe/outfit/1.png");
+                game.load.image("outfit2","zoe/outfit/2.png");
+                game.load.image("outfit3","zoe/outfit/3.png");
+                game.load.image("outfit4","zoe/outfit/4.png");
+                
+                //load background
+                game.load.image("bg","bg.png")
+                
+            },
+            create:function(){
+                //add background
+                this.background = game.add.sprite(0,0,"bg")
+                
+                //make the background fit
+                this.background.width = game.width;
+                this.background.height = game.height;
+                
+
+                
+            },
+            update:function(){
+                
+            }
+        }
+        
+        var game = new Phaser.Game(800,600,Phaser.AUTO);
+        
+        //adding a game state
+        game.state.add("game", Game);
+        
+        //lets start the game
+        game.state.start("game")
+        
+        
+        
+    </script>
+</body>
+</html>

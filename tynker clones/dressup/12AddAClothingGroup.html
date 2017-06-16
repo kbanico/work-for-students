@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candy</title>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //load the outfits
+                game.load.image("base","zoe/outfit/base.png");
+                game.load.image("outfit0","zoe/outfit/0.png");
+                game.load.image("outfit1","zoe/outfit/1.png");
+                game.load.image("outfit2","zoe/outfit/2.png");
+                game.load.image("outfit3","zoe/outfit/3.png");
+                game.load.image("outfit4","zoe/outfit/4.png");
+                
+                //load background
+                game.load.image("bg","bg.png")
+                
+                //jacket icon
+                game.load.image("jacket","jacket.png");
+                
+                //load the face
+                game.load.image("face","zoe/face.png")
+                
+            },
+            create:function(){
+                //add background
+                this.background = game.add.sprite(0,0,"bg")
+                
+                //make the background fit
+                this.background.width = game.width;
+                this.background.height = game.height;
+                
+                
+                //add the character base outfit
+                this.playerBase = game.add.sprite(game.world.centerX,game.world.centerY,"base");
+
+                //set the anchor of the sprite in the middle
+                this.playerBase.anchor.setTo(0.5);
+                
+                //add the jacket icon
+                this.outfitIcon = game.add.sprite(20,20,"jacket")
+                
+                //make the jacket clickable
+                this.outfitIcon.inputEnabled = true;
+                
+                //add a change outfit function when clicked
+                this.outfitIcon.events.onInputDown.add(this.changeOutfit,this);
+                
+                //add a custom parameter to the playerBase
+                //so we know what outfit we currently is on
+                this.playerBase.currentOutfit = "base";
+                
+                //add an outfit sprite
+                //null means we haven't done anything to the newOutfit
+                //yet but we will later 
+                //so we are just "initializing it for later use"
+                this.newOutfit = null;
+                
+                //add the face
+                this.face = game.add.sprite(this.playerBase.x,this.playerBase.y,"face")
+                
+                //the face anchor to be in the middle
+                this.face.anchor.setTo(0.5)
+                
+                //Add a clothing Group
+                this.clothingGroup = game.add.group();
+                
+                //add the newOutfit and the playerBase to the group
+                this.clothingGroup.add(this.playerBase)
+                
+                //we also need to add the newOutfit which is in the change outfit function
+                
+                //add a face group to it stays on top of everything
+                this.faceGroup = game.add.group()
+                
+                //send the face sprite to the group
+                this.faceGroup.add(this.face)
+                
+            },
+            update:function(){
+                
+            },
+            changeOutfit:function(){
+                console.log("you clicked me")
+                
+                //check if currentOutfit is equal to "base"
+                if(this.playerBase.currentOutfit == "base"){
+                    //add a sprite on top of the base clothes
+                    //we are going to use the x and y position of the base outfit
+                    this.newOutfit = game.add.sprite(this.playerBase.x,this.playerBase.y,"outfit0")
+                    
+                    //set the anchor to the middle
+                    //since our base outfit is anchored the same way
+                    this.newOutfit.anchor.setTo(0.5)
+                    
+                    //then we set our custom parameter to 0 so we can increase it later
+                    this.playerBase.currentOutfit = 0;
+                    
+                    this.clothingGroup.add(this.newOutfit)
+                    
+                }else if(this.playerBase.currentOutfit != "base" && this.playerBase.currentOutfit < 4){
+                    //if we click again we increase the currentOutfit to 1
+                    this.playerBase.currentOutfit += 1
+                    
+                    //change the outfit
+                    this.newOutfit.loadTexture("outfit"+this.playerBase.currentOutfit)
+                }else{
+                    //remove the newOutfit
+                    this.playerBase.currentOutfit = "base"
+                    this.newOutfit.kill();
+                }
+            }
+            
+        }
+        
+        var game = new Phaser.Game(1200,800,Phaser.AUTO);
+        
+        //adding a game state
+        game.state.add("game", Game);
+        
+        //lets start the game
+        game.state.start("game")
+        
+        
+        
+    </script>
+</body>
+</html>

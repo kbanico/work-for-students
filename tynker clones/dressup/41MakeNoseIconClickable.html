@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candy</title>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //load the outfits
+                game.load.image("base","zoe/outfit/base.png");
+                game.load.image("outfit0","zoe/outfit/0.png");
+                game.load.image("outfit1","zoe/outfit/1.png");
+                game.load.image("outfit2","zoe/outfit/2.png");
+                game.load.image("outfit3","zoe/outfit/3.png");
+                game.load.image("outfit4","zoe/outfit/4.png");
+                
+                //load background
+                game.load.image("bg","bg.png")
+                
+                //jacket icon
+                game.load.image("jacket","jacket.png");
+                
+                //load the face
+                game.load.image("face","zoe/face.png")
+                
+                //load the "SPRITESHEET" for the eyes
+                //parameters are key,location of the images,width,height
+                game.load.spritesheet("eyes","zoe/eyes.png",481,304);
+                
+                //load the eye icon to be used as a button
+                game.load.image("eyeIcon","eyeIcon.png")
+                
+                //load the hair image
+                //Note this is a SPRITESHEET
+                game.load.spritesheet("hair","zoe/hair.png",600,377);
+                
+                //load the hair icon
+                game.load.image("hairIcon","hairIcon.png");
+                
+                //load the mouth SPRITESHEET
+                game.load.spritesheet("mouth","zoe/mouth.png",75,52);
+                
+                //load the mouth icon
+                game.load.image("mouthIcon","mouthIcon.png");
+                
+                //load the nose SPRITESHEET
+                game.load.spritesheet("nose","zoe/nose.png",431,351);
+                
+                //load the nose Icon
+                game.load.image("noseIcon","noseIcon.png")
+                
+                
+            },
+            create:function(){
+                //add background
+                this.background = game.add.sprite(0,0,"bg")
+                
+                //make the background fit
+                this.background.width = game.width;
+                this.background.height = game.height;
+                
+                
+                //add the character base outfit
+                this.playerBase = game.add.sprite(game.world.centerX,game.world.centerY,"base");
+
+                //set the anchor of the sprite in the middle
+                this.playerBase.anchor.setTo(0.5);
+                
+                //add the jacket icon
+                this.outfitIcon = game.add.sprite(20,20,"jacket")
+                
+                //make the jacket clickable
+                this.outfitIcon.inputEnabled = true;
+                
+                //add a change outfit function when clicked
+                this.outfitIcon.events.onInputDown.add(this.changeOutfit,this);
+                
+                //add a custom parameter to the playerBase
+                //so we know what outfit we currently is on
+                this.playerBase.currentOutfit = "base";
+                
+                //add an outfit sprite
+                //null means we haven't done anything to the newOutfit
+                //yet but we will later 
+                //so we are just "initializing it for later use"
+                this.newOutfit = null;
+                
+                //add the face
+                this.face = game.add.sprite(this.playerBase.x,this.playerBase.y,"face")
+                
+                //the face anchor to be in the middle
+                this.face.anchor.setTo(0.5)
+                
+                //Add a clothing Group
+                this.clothingGroup = game.add.group();
+                
+                //add the newOutfit and the playerBase to the group
+                this.clothingGroup.add(this.playerBase)
+                
+                //we also need to add the newOutfit which is in the change outfit function
+                
+                //add a face group to it stays on top of everything
+                this.faceGroup = game.add.group()
+                
+                //send the face sprite to the group
+                this.faceGroup.add(this.face)
+                
+                //add an eye to the face
+                this.eyes = game.add.sprite(455,40,"eyes")
+                
+                //set the anchor of the eyes to the middle
+                this.eyes.anchor.setTo(0.5)
+                
+                //change the frame or the photo of the eyes
+                this.eyes.frame = 4
+                
+                //add an eye icon
+                this.eyeIcon = game.add.sprite(20,200,"eyeIcon");
+                
+                //make the eye icon clickable
+                this.eyeIcon.inputEnabled = true;
+                
+                //Add a click function to the eye icon
+                this.eyeIcon.events.onInputDown.add(this.changeEyes,this);
+                
+                //add a hair sprite
+                this.hair = game.add.sprite(215,-100,"hair")
+                
+                //change the frame of the hair
+                this.hair.frame = 2;
+                
+                //add the hair icon for our button
+                this.hairIcon = game.add.sprite(20,370,"hairIcon");
+                
+                //make the hair icon clickable
+                this.hairIcon.inputEnabled = true;
+                
+                //lets add a clickHair function
+                this.hairIcon.events.onInputDown.add(this.changeHair,this);
+                
+                //add a mouth
+                this.mouth = game.add.sprite(600,220,"mouth");
+                
+                //add a mouth icon so we can click on it
+                this.mouthIcon = game.add.sprite(20,570,"mouthIcon");
+                
+                //make the mouth icon clickable
+                this.mouthIcon.inputEnabled = true;
+                
+                //lets add a changeMouth function to the mouthIcon
+                this.mouthIcon.events.onInputDown.add(this.changeMouth,this);
+                
+                //add a nose to the character
+                this.nose = game.add.sprite(215,-120,"nose");
+                
+                //change the frame of the nose
+                this.nose.frame = 2
+                
+                //add a nose icon
+                this.noseIcon = game.add.sprite(game.world.width - 200,20,"noseIcon");
+                
+                //make the nose icon clickable
+                this.noseIcon.inputEnabled = true;
+                
+                
+            },
+            update:function(){
+                
+            },
+            changeOutfit:function(){
+                console.log("you clicked me")
+                
+                //check if currentOutfit is equal to "base"
+                if(this.playerBase.currentOutfit == "base"){
+                    //add a sprite on top of the base clothes
+                    //we are going to use the x and y position of the base outfit
+                    this.newOutfit = game.add.sprite(this.playerBase.x,this.playerBase.y,"outfit0")
+                    
+                    //set the anchor to the middle
+                    //since our base outfit is anchored the same way
+                    this.newOutfit.anchor.setTo(0.5)
+                    
+                    //then we set our custom parameter to 0 so we can increase it later
+                    this.playerBase.currentOutfit = 0;
+                    
+                    this.clothingGroup.add(this.newOutfit)
+                    
+                }else if(this.playerBase.currentOutfit != "base" && this.playerBase.currentOutfit < 4){
+                    //if we click again we increase the currentOutfit to 1
+                    this.playerBase.currentOutfit += 1
+                    
+                    //change the outfit
+                    this.newOutfit.loadTexture("outfit"+this.playerBase.currentOutfit)
+                }else{
+                    //remove the newOutfit
+                    this.playerBase.currentOutfit = "base"
+                    this.newOutfit.kill();
+                }
+            },
+            changeEyes:function(){
+                //Note we have 10 eyes in the spritesheet
+                //make sure to have set the eyes back to frame 0
+                //if the students changed the frame
+                console.log("clicked the eye")
+                
+                //if the eye frame is not equal to 10
+                if(this.eyes.frame < 9){
+                    //this adds 1 to the current frame of the eyes
+                    this.eyes.frame += 1
+                }else{
+                    //if the eyes frames is greater than 10 we set it back to 0
+                    this.eyes.frame = 0
+                }
+                //so we can see the current frame number of the eyes
+                console.log(this.eyes.frame)
+            },
+            changeHair:function(){
+                console.log("clicked the hair icon");
+                
+                //Note we only have 3 hair color
+                
+                if(this.hair.frame < 3){
+                    //lets add one to the frame so that it will switch hair color
+                    this.hair.frame += 1
+                }else{
+                    this.hair.frame = 0
+                }
+            },
+            changeMouth:function(){
+                console.log("clicked the mouth icon")
+                //NOTE WE ONLY HAVE 15 images of the mouth
+                if(this.mouth.frame < 14){
+                    this.mouth.frame += 1
+                }else{
+                    //set the frame back to 0
+                    this.mouth.frame = 0;
+                }
+                
+            }
+            
+        };
+        
+        var game = new Phaser.Game(1200,800,Phaser.AUTO);
+        
+        //adding a game state
+        game.state.add("game", Game);
+        
+        //lets start the game
+        game.state.start("game")
+        
+        
+        
+    </script>
+</body>
+</html>
