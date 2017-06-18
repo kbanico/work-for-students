@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Candy</title>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //Load the background image
+                game.load.image("background", "background.png");
+                
+                //Load the floor
+                game.load.image("floor","floor.png");
+                
+                //load the monster
+                game.load.image("monster","monster.png")
+                
+                 //load the candy note this is a spritesheet
+                //82 is the with of each candy
+                //98 is the height of each candy
+                game.load.spritesheet("candy","candy.png",82,98);
+                
+                //load in a sound
+                game.load.audio("crunch","crunch.mp3");
+                
+                //load background music
+                game.load.audio("song","song.mp3");
+                
+                //load game over photo
+                game.load.image("gameover","gameover.png")
+                
+            },
+            create:function(){
+                //Add a background to our game
+                this.background = game.add.sprite(0,0,"background");
+                
+                //Add the floor to the game
+                this.floor = game.add.sprite(-30,800,"floor")
+                
+                //Add the monster
+                this.monster = game.add.sprite(5,760,"monster")
+                
+                //Add A Single Candy (we will be removing this later)
+                this.candy = game.add.sprite(100,100,"candy")
+                
+                //Lets change it to another type of candy
+                this.candy.frame = 2;
+                
+                //Add Physics so we can have the candy fall
+                game.physics.startSystem(Phaser.Physics.ARCADE);
+                //Add gravity to the y position
+                game.physics.arcade.gravity.y = 200;
+                
+                //Add physics to the candy
+                game.physics.arcade.enable(this.candy);
+                
+                //Add physics to the floor
+                game.physics.arcade.enable(this.floor)
+                
+                //remove gravity from the floor
+                //so that it won't fall off the game
+                this.floor.body.allowGravity = false;
+                
+                //make the floor immovable
+                this.floor.body.immovable = true;
+                
+                //change the hit box of the floor
+                //this creates a 960 wide x 100 height box and we offset by its height
+                this.floor.body.setSize(960,100,0,100)
+                
+                //lets add a candy group so we can have lots of candy that we can code all at once
+                this.candyGroup = this.add.group();
+                
+                //Add a timer for every 1 second for a candy to drop 
+                //we will need to code a dropCandy function
+                game.time.events.loop(1000,this.dropCandy,this)
+                
+                // make the candy group remove itself from the game when it leaves the screen
+                this.candyGroup.checkWorldBounds = true;
+                this.candyGroup.outOfBoundsKill = true;
+                
+                //Add a text box
+                //we need to specify a style
+                //font is the type of font
+                //fill if the color
+                var style = {font: "30px Arial", fill: "#ffffff"}
+                // parameters are x, y, text, style options
+                this.candyText = game.add.text(20,20,"CANDY EATEN: ", style)
+                
+                //Add a candy counter
+                //in the beginning we start with zero candy
+                //when we click on a candy we need to increase the counter in our takeCandy function
+                this.candyCounter = 0;
+                
+                //create a audio for when we click on a piece of candy
+                this.crunch = game.add.audio("crunch");
+                
+                //create an audio for background music
+                this.song = game.add.audio("song");
+                
+                //play the song immediately
+                this.song.play();
+                
+                //add a gameover photo
+                this.gameOver = game.add.sprite(0,300,"gameover");
+                
+                //make gameOver photo invisible
+                this.gameOver.visible = false;
+                
+                
+                
+            },
+            update:function(){
+                // make the floor and the candy collide
+                game.physics.arcade.collide(this.floor,this.candy)
+                
+            },
+            dropCandy:function(){
+              //create a random x position so the candy can drop from that position 
+                var randomX = game.rnd.integerInRange(30,580);
+                
+             //get a random candy
+                var randomCandy = game.rnd.integerInRange(0,5)
+                
+             //add a temporary variable called candy
+             // that we will use to make a sprite
+                var candy = game.add.sprite(randomX,100,"candy");
+                
+             //change the picture of the candy to a random one
+                candy.frame = randomCandy;
+                
+             //add physics to the candy
+                game.physics.enable(candy);
+                
+             //make the candy clickable
+                candy.inputEnabled = true;
+                
+             //add a click event that we will code
+                candy.events.onInputDown.add(this.takeCandy,this);
+                
+             //add the candy to the group
+                this.candyGroup.add(candy);
+                
+                
+            },
+            takeCandy:function(candy){
+                console.log("took candy")
+                
+                //increase the candy counter
+                this.candyCounter = this.candyCounter + 1;
+                
+                //reset the text to add the new amount of candy
+                this.candyText.text = "CANDY EATEN " + this.candyCounter;
+                
+                //Add a animation "tween" to bring the candy to the monster
+                //here we named the tween this.candyAnimation then we set
+                //animation to the candy
+                this.candyAnimation = game.add.tween(candy)
+                
+                //then we specify where it will go
+                //in x position and in y position
+                //we also specify how long it will take here i put 800 milliseconds
+                this.candyAnimation.to({x:this.monster.x,y:this.monster.y},800);
+                
+                //we want to start the animation now
+                this.candyAnimation.start();
+                
+                //then we set an action that happens after the animation is done
+                //we want the candy to be removed from the game after the animation finishes
+                this.candyAnimation.onComplete.add(function(){
+                    //remove the candy from the game
+                    candy.kill()
+                },this);
+                
+                
+                
+                //play the cruch sound
+                this.crunch.play();
+            },
+            render:function(){
+                this.game.debug.body(this.floor)
+                this.game.debug.body(this.candy)
+            }
+        }
+        
+        var game = new Phaser.Game(640,960,Phaser.AUTO);
+        
+        //adding a game state
+        game.state.add("game", Game);
+        
+        //lets start the game
+        game.state.start("game")
+        
+        
+        
+    </script>
+</body>
+</html>
