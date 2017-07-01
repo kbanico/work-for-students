@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+</head>
+
+<body>
+    <script>
+        var gameState = {
+            preload: function () {
+                game.load.image("bg","bg.jpg");
+                game.load.image("bb","bb.gif");
+                game.load.image("s","s.png");
+                game.load.image("bullet","fireball.png");
+                game.load.image("fireball","red.png")
+                game.load.spritesheet("giant_mario","g-mario.png",88.6666,124);
+                game.load.spritesheet("explosion","boom.png",192,195);
+            }
+            , create: function () {
+                game.physics.startSystem(Phaser.Physics.ARCADE);
+                this.background = game.add.sprite(0,0,"bg");
+                this.bb = game.add.sprite(100,100,"bb")
+                this.bb.scale.setTo(0.3)
+                game.physics.arcade.enable(this.bb)
+                this.bb.body.gravity.y = 500;
+                this.bb.body.collideWorldBounds = true;
+                this.bb.body.fixedRotation = true;
+                game.camera.follow(this.bb);
+                //add movement
+                this.cursors = game.input.keyboard.createCursorKeys();
+                this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+                
+                
+                this.floorGroup = game.add.group();
+                this.floorGroup.enableBody = true;
+                this.floorGroup.physicsBodyType = Phaser.Physics.ARCADE;
+               
+                for(var i = 0; i < 17; i++){
+                    var block = game.add.sprite(0 + (i * 55),585,"s")
+                    this.floorGroup.add(block)
+                    
+                }
+                 this.floorGroup.setAll('body.immovable', true);
+                 this.floorGroup.setAll('visible', false);
+                
+                //shooting
+                this.bullets = game.add.group()
+                game.physics.arcade.enable(this.bullets);
+                this.shotTimer = 0;
+                this.enemy;
+                this.enemyHP = 100;
+                this.spawnEnemy();
+                this.pathCounter = 0;
+                
+                //fireballs for mario
+                this.shotTimerEnemy = 0;
+                this.fireballs = game.add.group();
+                this.fireballs.enableBody = true;
+                this.fireballs.physicsBodyType = Phaser.Physics.ARCADE;
+            }
+            , update: function () {
+                game.physics.arcade.collide(this.fireballs,this.floorGroup)
+                game.physics.arcade.collide(this.bullets,this.enemy,this.hitEnemy,null,this)
+                game.physics.arcade.collide(this.bb,this.floorGroup)
+                game.physics.arcade.collide(this.enemy,this.floorGroup)
+                //move bb
+                this.bb.body.velocity.x = 0;
+                if(this.cursors.left.isDown){
+                    this.bb.body.velocity.x = -150;
+                    this.bb.scale.setTo(-0.3,0.3)
+                    this.bb.facing = "left"
+                }else if(this.cursors.right.isDown){
+                    this.bb.body.velocity.x = 150;
+                    this.bb.scale.setTo(0.3)
+                    this.bb.facing = "right"
+                }
+                if(this.cursors.up.isDown && this.bb.body.touching.down){
+                    this.bb.body.velocity.y = -385;
+                }
+                if(this.spaceKey.isDown){
+                    this.shoot();
+                }
+                
+                this.pathCounter++;
+                if(this.pathCounter >= 750){
+                    this.pathCounter = 0;
+                }
+                if(this.enemyHP > 0){
+                    this.enemyPath();
+                    this.enemyShoots();
+                }
+                
+                this.updateEnemyHP();
+                
+                if(this.enemyHP <= 80){
+                    this.enemyDies();
+                }
+                
+            },
+            shoot:function(){
+                if(this.shotTimer < game.time.now){
+                    this.shotTimer = game.time.now + 275;
+                    var bullet;
+                    if(this.bb.facing == "right"){
+                        bullet = this.bullets.create(this.bb.body.x + this.bb.body.width / 2 + 20, this.bb.body.y + this.bb.body.height / 2 - 4,"bullet")
+                    }else{
+                        bullet = this.bullets.create(this.bb.body.x + this.bb.body.width / 2 - 20, this.bb.body.y + this.bb.body.height / 2 - 4, "bullet");
+                    }
+                   
+                    bullet.scale.setTo(0.2)
+                    game.physics.arcade.enable(bullet)
+                    bullet.checkWorldBounds = true;
+                    bullet.outOfBoundsKill = true;
+                    bullet.body.velocity.y = 0;
+                    if(this.bb.facing == "right"){
+                        bullet.body.velocity.x = 400;
+                    }
+                    if(this.bb.facing == "left"){
+                        bullet.body.velocity.x = -400;
+                    }
+                }
+                
+            },
+            spawnEnemy:function(){
+                this.enemy = game.add.sprite(540,150,"giant_mario");
+                game.physics.arcade.enable(this.enemy)
+                this.enemy.body.gravity.y = 500;
+                this.enemy.body.collideWorldBounds = true;
+                this.enemy.body.fixedRotation = true;
+                this.enemy.frame = 1;
+                this.enemy.animations.add("walking-left",[0,1,2],6,true);
+                this.enemy.animations.add("walking-right",[3,4,5],6,true);
+                this.enemyText = game.add.text(this.enemy.body.x,this.enemy.body.y - 30, this.enemyHP);
+                this.enemy.scale.setTo(2)
+            },
+            enemyPath:function(){
+                if(this.pathCounter < 325){
+                    this.enemy.animations.play("walking-left");
+                    this.enemy.body.velocity.x = -100;
+                    this.enemy.facing = "left";
+                }else{
+                    this.enemy.animations.play("walking-right");
+                    this.enemy.body.velocity.x = 100;
+                    this.enemy.facing = "right";
+                }
+            },
+            updateEnemyHP(){
+                this.enemyText.x = this.enemy.x + 50
+                this.enemyText.y = this.enemy.y - 29
+            },
+            hitEnemy:function(enemy,bullet){
+                bullet.kill();
+                this.enemyHP-=5;
+                this.enemyText.text = this.enemyHP
+            },
+            enemyDies:function(){
+                this.boom = game.add.sprite(this.enemy.x - 50, this.enemy.y - 20, "explosion");
+                game.physics.arcade.enable(this.boom);
+                this.boom.animations.add("death",null,25);
+                this.boom.animations.play("death");
+                this.enemy.kill();
+                game.time.events.add(2000,function(){
+                    game.world.remove(this.boom)
+                },this)
+                this.winText = game.add.text(game.width / 2 - 50, game.height / 2, "YOU WIND")
+            },
+            enemyShoots:function(){
+                if(this.shotTimerEnemy < game.time.now){
+                    this.shotTimerEnemy = game.time.now + 3000;
+                    var fireball;
+                    if(this.enemy.facing == "right"){
+                        fireball = this.fireballs.create(this.enemy.x + this.enemy.body.width / 2 + 45, this.enemy.y + this.enemy.body.height / 2 + 5, "fireball");
+                    }else{
+                        fireball = this.fireballs.create(this.enemy.x + this.enemy.body.width / 2 + 40, this.enemy.y + this.enemy.body.height / 2 + 5, "fireball");
+                    }
+                    game.physics.arcade.enable(fireball);
+                    fireball.body.gravity.y = 500;
+                    fireball.body.bounce.y = 1;
+                    fireball.checkWorldBounds = true;
+                    fireball.outOfBoundsKill = true;
+                    fireball.anchor.setTo(0.5)
+                    fireball.body.velocity.y = 0;
+                    fireball.scale.setTo(0.3)
+                    if(this.enemy.facing == "right"){
+                        fireball.body.velocity.x = 200;
+                        fireball.scale.setTo(0.3)
+                    }else{
+                        fireball.body.velocity.x = -200;
+                        fireball.scale.setTo(-0.3,0.3)
+                    }
+                }
+            }
+        }
+        var game = new Phaser.Game(920,640, Phaser.AUTO);
+        game.state.add("gameState", gameState);
+        game.state.start("gameState")
+    </script>
+</body>
+
+</html>
