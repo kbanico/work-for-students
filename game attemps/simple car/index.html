@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Enemy = function(index,game,player,bullets,key){
+            this.game = game;
+            var x = game.world.randomX;
+            var y = game.world.randomY;
+            Phaser.Sprite.call(this,game,x,y,key);
+            
+            this.health = 3;
+            this.player = player;
+            this.bullets = bullets;
+            this.fireRate = 1000;
+            this.nextFire = 0;
+            this.alive = true;
+            this.anchor.setTo(0.5);
+           
+            this.name = index.toString();
+            this.game.physics.arcade.enableBody(this);
+            this.body.immovable = false;
+            this.angle = this.game.rnd.angle()
+            this.body.collideWorldBounds = true;
+            this.body.bounce.set(1,1);
+            this.game.physics.arcade.velocityFromRotation(this.rotation,200,this.body.velocity)
+            this.game.add.existing(this)
+        }
+        Enemy.prototype = Object.create(Phaser.Sprite.prototype);
+        Enemy.prototype.constructor = Enemy;
+        
+        Enemy.prototype.damage = function(){
+            this.health-=1;
+            if(this.health <= 0){
+                this.alive.false;
+                this.kill();
+                return true;
+            }
+            return false;
+        }
+        
+        Enemy.prototype.update = function(){
+            this.rotation = this.game.physics.arcade.angleBetween(this,this.player)
+            if(this.game.physics.arcade.distanceBetween(this,this.player) < 300){
+                if(this.game.time.now > this.nextFire && this.bullets.countDead() > 0){
+                    this.nextFire = this.game.time.now + this.fireRate;
+                    var bullet = this.bullets.getFirstDead();
+                    bullet.reset(this.x,this.y);
+                    bullet.rotation = this.game.physics.arcade.moveToObject(bullet,this.player,500);
+                }
+            }
+        }
+
+        
+        
+        var gameState = {
+            preload:function(){
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);    
+                game.load.image("car2","car.png")
+                game.load.image("car1","car2.png")
+                game.load.image('bullet',"bullet.png")
+                game.load.image('car3',"car3.png")
+                game.load.image("land","land.png")
+                
+            },
+            create:function(){
+                  game.stage.backgroundColor = "#e8d9c5";
+                this.land = game.add.tileSprite(0,0,2000,2000,"land")
+                
+                //resize the world
+                this.game.world.setBounds(0,0, 2000, 2000);
+                
+                this.fireRate = 1000;
+                this.nextFire = 0;
+                
+                this.player = this.game.add.sprite(100,100,"car1")
+                this.player.anchor.setTo(0.5)
+                this.game.physics.enable(this.player,Phaser.Physics.ARCADE);
+                this.player.body.drag.set(0.2);
+                this.player.body.maxVelocity.setTo(400,400);
+                this.player.body.collideWorldBounds = true;
+                
+                //enemy
+                this.enemyBullets = game.add.group();
+                this.enemyBullets.enableBody = true;
+                this.enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
+                this.enemyBullets.createMultiple(100,"bullet");
+                
+                this.enemyBullets.setAll("anchor.x",0.5)
+                this.enemyBullets.setAll("anchor.y",0.5)
+                this.enemyBullets.setAll("outOfBoundsKill",true)
+                this.enemyBullets.setAll("checkWorldBounds",true)
+                
+                this.enemies = []
+                
+                for(var i = 0; i < 20; i++){
+                    var enemy = new Enemy(i,this.game,this.player,this.enemyBullets,"car" + game.rnd.integerInRange(2,3))
+                    this.enemies.push(enemy)
+                }
+                
+                this.game.camera.follow(this.player);
+                this.game.camera.deadzone = new Phaser.Rectangle(150,150,500,300)
+                this.game.camera.focusOnXY(0, 0);
+                
+                this.cursors = game.input.keyboard.createCursorKeys();
+             
+                //player bullets
+                this.bullets = game.add.group();
+                this.bullets.enableBody = true;
+                this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+                this.bullets.createMultiple(30,"bullet",0,false);
+                this.bullets.setAll("anchor.x",0.5);
+                this.bullets.setAll("anchor.y",0.5);
+                this.bullets.setAll("outOfBoundsKill",true);
+                this.bullets.setAll("checkWorldBounds",true);
+                
+                this.player.bringToTop();
+                
+                
+            },
+            update:function(){
+                game.physics.arcade.collide(this.enemyBullets,this.player,this.bulletHitPlayer,null,this);
+                this.enemiesAlive = 0;
+                for(var i = 0; i < this.enemies.length; i++){
+                    if(this.enemies[i].alive){
+                        this.enemiesAlive++;
+                        game.physics.arcade.collide(this.player,this.enemies[i]);
+                        game.physics.arcade.overlap(this.bullets,this.enemies[i],this.bulletHitEnemy,null,this)
+                    }
+                }
+                
+                if(this.cursors.left.isDown){
+                    this.player.angle-=4;
+                }else if(this.cursors.right.isDown){
+                    this.player.angle+=4;
+                }
+                if(this.cursors.up.isDown){
+                    this.currentSpeed = 300;
+                }else{
+                    if(this.currentSpeed > 0){
+                        this.currentSpeed-=4
+                    }
+                }
+                if(this.currentSpeed > 0){
+                    game.physics.arcade.velocityFromRotation(this.player.rotation,this.currentSpeed,this.player.body.velocity)
+                }
+                if(game.input.activePointer.isDown){
+                    this.fire();
+                }
+            },
+            bulletHitPlayer:function(player,bullet){
+                bullet.kill();
+            },
+            bulletHitEnemy:function(tank,bullet){
+                bullet.kill();
+                tank.damage();
+               
+            },
+            fire:function(){
+                if(game.time.now > this.nextFire && this.bullets.countDead() > 0){
+                    console.log("inside fire method")
+                    this.nextFire = game.time.now + this.fireRate;
+                    var bullet = this.bullets.getFirstExists(false);
+                    bullet.reset(this.player.x,this.player.y);
+                    bullet.rotation = game.physics.arcade.moveToPointer(bullet,1000,game.input.activePointer,500);
+                }
+            }
+        }
+        
+        
+        var game = new Phaser.Game(800,600,Phaser.AUTO);
+        game.state.add("gameState",gameState);
+        game.state.start("gameState");
+    </script>
+</body>
+</html>
