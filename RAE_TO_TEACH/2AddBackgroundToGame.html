@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                this.game.load.image("background","background.png");
+                this.game.load.image("cat","cat.png");
+                
+                
+            },
+            create:function(){
+                
+                //Add the background            
+                //We give it a variable name
+                //then we add a sprite to the game
+                //by giving it and X position and Y position and the name of the loaded image
+                this.background = this.game.add.sprite(0,0,"background");
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>
