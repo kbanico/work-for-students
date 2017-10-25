@@ -1,0 +1,8 @@
+-Maybe make a simple console todo app
+-Random enemy spawn (like the random insult generator)
+-code along to make a map with arrays
+-Maybe a good progject is to have them build there own map with more arrays
+
+
+
+work with a real work project that someone else designed

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        /*
+            Imagine you are working for a company to make the first pokemon game
+            They think this game will make it big
+            You are given a task to fix some bugs in the code
+            The last programmer that worked on the project forgot to do a couple of things
+            
+            Can you help make the game work for your boss
+            
+            //----------------- LEARNING GOALS --------------\\
+            -revisting how to load an image and adding it to the game world
+            -learn to make an image smaller by using the scale property
+            
+            
+            
+            //------------------ Task ---------------------\\
+            -preload the three images for the legendary bird    
+            -add the three birds images to the game
+                
+                
+        */
+        
+        
+        var Game = {
+            preload:function(){
+                //Enter your code to load the birds here
+                
+                this.game.load.image("background","background.png")
+                this.game.load.image("player","player.png")
+    
+            },
+            create:function(){
+                //addiing a background
+                this.background = this.game.add.sprite(0,0,"background");
+                
+                //adding the player
+                this.player = this.game.add.sprite(750,300,"player")
+                this.player.scale.setTo(0.2)
+                this.player.anchor.setTo(0.5)
+                
+                //Adding keyboard controls
+                this.cursors = this.game.input.keyboard.createCursorKeys();
+                
+                //Enter your code to add the legendary birds here
+                //--------------NOTE
+                //Spread the birds around the map
+                
+                
+                
+            },
+            update:function(){
+                this.movePlayer();
+            },
+            movePlayer:function(){
+                if(this.cursors.left.isDown){
+                    this.player.x -= 5;
+                    this.player.scale.setTo(0.2,0.2)
+                }
+                if(this.cursors.right.isDown){
+                    this.player.x += 5;
+                    this.player.scale.setTo(-0.2,0.2)
+                }
+                if(this.cursors.up.isDown){
+                    this.player.y -= 5;
+                }
+                if(this.cursors.down.isDown){
+                    this.player.y += 5;
+                }
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

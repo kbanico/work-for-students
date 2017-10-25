@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+    
+            },
+            create:function(){
+                //--Chapter 2
+                //--What are strings?
+                //--- Strings are used to represent text information
+                //-------Learning Goals----------\\
+                //--Display A String On The Game World
+                //--Change the background Color of our game
+                
+                //In the book we use var to create a variable
+                //but since our game is using an 'object'
+                //we have to use the `this` keyword
+                this.myString = this.game.add.text(350,300,"I'm Coding In Javascript");
+                //The above code basically is saying
+                //i'm creating a variable called myString 
+                //and i want to add a text to the game
+                //i want to put the text in position 350 in the x position
+                //and 300 in the y position
+                //followed by the text i want to display
+                
+                
+                //If we were to run this program now 
+                //we won't be able to see anything due to our gameworld has a black background color
+                //lets change the game background color to white
+                this.game.stage.backgroundColor = "#ffffff";
+                
+                
+                //-------------- NOTE -------------\\
+                //have students add more strings to the game world in different positions
+                //(favorite movie, favorite game, favorite food)
+                
+                this.myString2 = this.game.add.text(350,350,"I'm Coding In Javascript");
+                
+                //Now lets work with equallity with the two string variables
+                //To access our text from our variable we use the code below
+                console.log(this.myString.text == this.myString2.text);
+                
+                //We can also check the length of a string
+                console.log(this.myString.text.length)
+                
+                
+                //Now lets add a score label to our game
+                this.scoreLabel = this.game.add.text(20,20,"Score: ")
+                
+                //Next we will be learning about concatenating strings in javascript
+                //so lets take our score and add some numbers to it
+                //we can declare a variable score to store a number
+                this.score = 1000;
+                
+                //Now lets display it on the game
+                this.scoreLabel.text += this.score;
+                //what the above code is saying is hey
+                //lets combine our string with this number
+                
+                //Now lets create another variable called bonus score
+                //And add that to our score
+                this.bonus = 200;
+                this.score += this.bonus;
+                
+                //If we run this game now our score will be be updated
+                //we have to update our score label to make the change
+                
+                this.scoreLabel.text += this.score;
+                
+                //We have our first bug in our code
+                //when we run this program our score label gets two different scores
+                //lets fix that now
+                
+                //To fix it we can simply overwrite what we have in our scoreLabel variable
+                this.scoreLabel.text = "Score: " + this.score;
+                
+                
+                //Now lets add our name to the game but this time
+                //we want it to be a different color and different size
+                //To change our font we use font
+                //to change our color we use fill
+                this.name = this.game.add.text(400,20,"kenneth banico",{font: "14px Arial",fill: "#ff0000"})
+
+                
+                //MAYBE GO THROUGHT MATH OPERATORS
+                //MAYBE GO OVER TO UPPER CASE TO LOWER CASE
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+        
+        
+        
+        
+        /*
+            
+        
+        
+        
+        
+        */
+    </script>
+</body>
+</html>

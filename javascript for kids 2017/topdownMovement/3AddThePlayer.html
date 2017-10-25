@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //have students load the images
+                this.load.image("player","images/player.png");
+                this.load.image("monster","images/monster.png");
+                this.load.image("background","images/background.png");
+            },
+            create:function(){
+                //add a background
+                this.background = this.game.add.sprite(0,0,"background")
+                
+                //make the background fit the world
+                this.background.height = this.game.height;
+                this.background.width = this.game.width;
+                
+                //add the player
+                this.player = this.game.add.sprite(100,100,"player")
+                
+                //lets add physics to the player
+                this.game.physics.arcade.enable(this.player)
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

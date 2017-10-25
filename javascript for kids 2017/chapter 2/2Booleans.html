@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                this.game.load.image("batman","legobatman.png");
+                this.game.load.image("minecraft","minecraft.png");
+                this.game.load.image("broccoli","broccoli.png");
+    
+            },
+            create:function(){  
+                this.game.stage.backgroundColor = "#ffffff";
+                this.myString = this.game.add.text(350,300,"I'm Coding In Javascript");
+                
+                /*
+                    Booleans
+                    
+                    What are booleans?
+                    -booleans represent data that can be either true or false
+                    
+                
+                    LEARNING GOALS
+                    -Understand booleans
+                    -preloading images
+                    -adding an image to the game
+                    -displaying the image only if something is true
+                    -understand comparisons with double equals
+                    -distinguesh the difference between double equals and a single equal sign
+                    -learning when to use var inside an object
+                    -learn to use if statements
+
+                */
+                
+                /*
+                    -First lets preload some images
+                    -We have 3 images in our folder (legobatman.png,minecraft.png,broccoli.png)
+                    -when we preload an image we use the preload function
+                    -we need to specify a name this can be anything you want to call your image 
+                     so we can reference it later
+                    -next we add the names of our images
+                */
+                
+                
+                
+                /*
+                    Next we declare some boolean variables    
+                */
+                
+                this.likesMineCraft = true;
+                this.likesLego = true;
+                this.likesBroccoli = true;
+                
+                
+                /*
+                    we will be using an if statement to check if something is true or false
+                    *note* we haven't covered if statements or logical operators yet
+                    
+                    
+                */
+                
+                if(this.likesMineCraft == true){
+                    var temporary = this.game.add.sprite(100,100,"minecraft");
+                }
+                
+                if(this.likesLego == true){
+                    var temporary = this.game.add.sprite(200,100,"batman");
+                }
+                
+                
+                if(this.likesBroccoli == true){
+                    var temporary = this.game.add.sprite(500,100,"broccoli");
+                }
+                
+                /*
+                  Have students write if statements to add a sprite to the game  
+                  
+                  Have students declare a variable called winning score and another variable called
+                  current score
+                  
+                  Then write an if statement that will display you win if the current score is >= winning score
+                  
+                */
+                
+                
+                
+                    
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

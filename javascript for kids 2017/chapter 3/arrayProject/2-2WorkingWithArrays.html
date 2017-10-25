@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        /*
+            Imagine you are working for a company to make the first pokemon game
+            They think this game will make it big
+            You are given a task to fix some bugs in the code
+            The last programmer that worked on the project forgot to do a couple of things
+            
+            Can you help make the game work for your boss
+            
+            //----------------- LEARNING GOALS --------------\\
+            -Implement Arrays using push
+            -Learn to add physics to sprites so we can interact with it
+            
+            
+            
+            //------------------ Task ---------------------\\
+            -preload the three images for the legendary bird    
+            -add the three birds images to the game
+                
+                
+        */
+        
+        
+        var Game = {
+            preload:function(){
+                //Enter your code to load the birds here
+                
+                this.game.load.image("background","background.png")
+                this.game.load.image("player","player.png")
+                
+                //Birds
+                this.game.load.image("bird1","bird1.png")
+                this.game.load.image("bird2","bird2.png")
+                this.game.load.image("bird3","bird3.png")
+    
+            },
+            create:function(){
+                this.background = this.game.add.sprite(0,0,"background");
+                this.player = this.game.add.sprite(750,300,"player")
+                this.player.scale.setTo(0.2)
+                this.player.anchor.setTo(0.5)
+                this.cursors = this.game.input.keyboard.createCursorKeys();
+                    
+                this.bird1 = this.game.add.sprite(Math.floor(Math.random() * game.width-100) + 50,Math.floor(Math.random() * game.height - 100) + 50,"bird1")
+                this.bird1.scale.setTo(0.3)
+                                                  
+                this.bird2 = this.game.add.sprite(Math.floor(Math.random() * game.width - 100) + 50,Math.floor(Math.random() * game.height - 100) + 50,"bird2")
+                this.bird2.scale.setTo(0.3)
+                
+                this.bird3 = this.game.add.sprite(Math.floor(Math.random() * game.width - 100) + 50,Math.floor(Math.random() * game.height-100) + 50,"bird3")
+                this.bird3.scale.setTo(0.5)
+                
+                
+                //Lets add physics to each of the birds
+                this.game.physics.arcade.enable(this.bird1);
+                this.game.physics.arcade.enable(this.bird2);
+                this.game.physics.arcade.enable(this.bird2);
+                
+                
+                //Lets add the birds with physics to a array called uncapture birds
+                this.uncapturedPokemon = [];
+                
+                //Now lets push the birds to the uncapturedPokemon array
+                this.uncapturedPokemon.push(this.bird1);
+                this.uncapturedPokemon.push(this.bird2);
+                this.uncapturedPokemon.push(this.bird3);
+                
+                //Lets create an empty array called capturedPokemon
+                //This will hold our legendary birds
+                this.capturedPokemon = [];
+            
+                
+            },
+            update:function(){
+                //We can use a collision detection to interact with each sprite
+                //We give it the two things that will iteract with each other
+                this.game.physics.arcade.overlap(this.player,this.uncapturedPokemon,function(player,pokemon){
+                    console.log("yo")
+                },null,this)
+                
+                this.movePlayer();
+            },
+            movePlayer:function(){
+                if(this.cursors.left.isDown){
+                    this.player.x -= 5;
+                    this.player.scale.setTo(0.2,0.2)
+                }
+                if(this.cursors.right.isDown){
+                    this.player.x += 5;
+                    this.player.scale.setTo(-0.2,0.2)
+                }
+                if(this.cursors.up.isDown){
+                    this.player.y -= 5;
+                }
+                if(this.cursors.down.isDown){
+                    this.player.y += 5;
+                }
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

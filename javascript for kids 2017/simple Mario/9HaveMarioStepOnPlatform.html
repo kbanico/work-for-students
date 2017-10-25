@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                
+                this.game.load.spritesheet("mario","mario.png",16, 32);
+                
+                //load the yellow block
+                this.game.load.image("block","block.png")
+    
+            },
+            create:function(){
+                this.game.stage.backgroundColor = "#b5eef9"
+                
+                this.player = this.game.add.sprite(100,100,"mario") 
+                this.player.scale.setTo(2,2)
+                
+                //world gravity
+                this.game.physics.arcade.gravity.y = 300;
+                
+                this.game.physics.arcade.enable(this.player)
+                this.player.body.collideWorldBounds = true;
+                
+                this.cursors = this.game.input.keyboard.createCursorKeys();
+                
+                this.platforms = this.game.add.group();
+                this.platforms.enableBody = true;
+                this.platform1 = this.game.add.sprite(0,770,"block")
+                this.platform1.scale.setTo(20,1)
+                
+                
+                this.platforms.add(this.platform1)
+                this.platform1.body.allowGravity = false;
+                this.platform1.body.immovable = true;
+                
+                
+                
+              
+                
+                
+                
+            },
+            update:function(){
+                //collision between the platform and mario
+                this.game.physics.arcade.collide(this.player,this.platforms)
+             
+                if(this.cursors.left.isDown){
+                   this.player.body.velocity.x = -100; 
+                    //make the player face left
+                    this.player.scale.setTo(-2,2);
+                }
+                
+                if(this.cursors.right.isDown){
+                    this.player.body.velocity.x = 100;
+                    this.player.scale.setTo(2,2);
+                }
+            }
+        }
+        
+    
+        var game = new Phaser.Game(600,800, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

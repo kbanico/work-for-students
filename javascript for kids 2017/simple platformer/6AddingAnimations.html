@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //load the sky,ground,star, and dude
+                this.game.load.image("sky","assets/sky.png")
+                this.game.load.image("ground","assets/platform.png")
+                this.game.load.image("star","assets/star.png")
+                
+                //Notice we load a spritesheet instead of an images
+                this.game.load.spritesheet("dude","assets/dude.png",32,48);
+            },
+            create:function(){
+                //lets add gravity to the game
+                this.game.physics.arcade.gravity.y = 300;
+                
+                //add a sky background
+                this.background = this.game.add.sprite(0,0,"sky");
+                
+                //lets create the hero of the game
+                this.player = this.game.add.sprite(100,100,"dude")
+                
+                //lets add physics to the player
+                this.game.physics.arcade.enable(this.player);
+                
+                //keep the player inside the world
+                this.player.body.collideWorldBounds = true;
+                
+                //lets give a little bounce to the player
+                this.player.body.bounce.y = 0.5;
+                
+                //now lets add some player animations
+                this.player.animations.add("left",[0,1,2,3],10,true);
+                this.player.animations.add("right",[5,6,7,8],10,true);
+                
+                //lets check if both works
+                this.player.animations.play("left")
+                
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

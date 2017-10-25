@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                /*
+                    Have students perform a small project to make a title screen
+                    
+                    Imagine you are part of a team of developers that is coding a new game
+                    Your task is to make a title screen for a game called 
+                    
+                        'SUPER MARIO KONG'
+                    
+                    
+                    *things that needs to be in the game*
+                    - A background image 
+                    - The title of the game
+                    - The name of your company (name it whatever you want)
+                    - A Touch To Start String
+                    
+                    
+                    - the title needs to be in the center of the game 
+                    - the company name needs to be write below the title
+                    - The company name needs to be smaller than the title and your boss wants it in a nice purple color
+                    - Lastly he wants you to add a `Touch Screen To Play` somewhere in the game
+                    - the `Touch Screen To Play` needs to be bigger than the company name but smaller than the title
+                    
+                    
+                    -You can look for nice background images on the internet and drop it into this folder
+                    -If we have time you can also draw a character or use any character from internet and 
+                     put it in your project
+                    
+                */
+    
+            },
+            create:function(){
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

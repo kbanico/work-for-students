@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                
+                this.game.load.spritesheet("mario","mario.png",16, 32);
+    
+            },
+            create:function(){
+                this.game.stage.backgroundColor = "#b5eef9"
+                
+                this.player = this.game.add.sprite(100,100,"mario") 
+                this.player.scale.setTo(2)
+                
+                //world gravity
+                this.game.physics.arcade.gravity.y = 100;
+                
+                //add physics to player
+                this.game.physics.arcade.enable(this.player)
+                
+                //prevent player from falling into eternal abyss
+                this.player.body.collideWorldBounds = true;
+                
+                
+                
+                
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(600,800, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

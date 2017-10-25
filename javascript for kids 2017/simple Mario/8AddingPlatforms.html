@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                
+                this.game.load.spritesheet("mario","mario.png",16, 32);
+                
+                //load the yellow block
+                this.game.load.image("block","block.png")
+    
+            },
+            create:function(){
+                this.game.stage.backgroundColor = "#b5eef9"
+                
+                this.player = this.game.add.sprite(100,100,"mario") 
+                this.player.scale.setTo(2,2)
+                
+                //world gravity
+                this.game.physics.arcade.gravity.y = 300;
+                
+                this.game.physics.arcade.enable(this.player)
+                this.player.body.collideWorldBounds = true;
+                
+                //Add keyboard controls
+                this.cursors = this.game.input.keyboard.createCursorKeys();
+                
+                //lets make a group called platforms to hold all of the yellow blocks
+                this.platforms = this.game.add.group();
+                //lets give this group physics
+                this.platforms.enableBody = true;
+                //lets make our first platform
+                this.platform1 = this.game.add.sprite(0,770,"block")
+                //lets scale the block to stretch all the way across
+                this.platform1.scale.setTo(20,1)
+                
+                //now lets add it to the platform group
+                this.platforms.add(this.platform1)
+                //lets remove gravity from platform1
+                this.platform1.body.allowGravity = false;
+                
+                
+                //have students add some platform to jump on
+                //have them make it as wide as they need it
+                //make sure to have them add it to the group
+                
+                
+                
+                
+            },
+            update:function(){
+             
+                if(this.cursors.left.isDown){
+                   this.player.body.velocity.x = -100; 
+                    //make the player face left
+                    this.player.scale.setTo(-2,2);
+                }
+                
+                if(this.cursors.right.isDown){
+                    this.player.body.velocity.x = 100;
+                    this.player.scale.setTo(2,2);
+                }
+            }
+        }
+        
+    
+        var game = new Phaser.Game(600,800, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

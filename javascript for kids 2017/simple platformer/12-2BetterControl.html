@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //load the sky,ground,star, and dude
+                this.game.load.image("sky","assets/sky.png")
+                this.game.load.image("ground","assets/platform.png")
+                this.game.load.image("start","assets/start.png")
+                
+                //Notice we load a spritesheet instead of an images
+                this.game.load.spritesheet("dude","assets/dude.png",32,48);
+            },
+            create:function(){
+                //lets add gravity to the game
+                this.game.physics.arcade.gravity.y = 300;
+                
+                //add a sky background
+                this.background = this.game.add.sprite(0,0,"sky");
+                
+                //lets create the hero of the game
+                this.player = this.game.add.sprite(100,100,"dude")
+                
+                //lets add physics to the player
+                this.game.physics.arcade.enable(this.player);
+                
+                //keep the player inside the world
+                this.player.body.collideWorldBounds = true;
+                
+                //lets give a little bounce to the player
+                this.player.body.bounce.y = 0.5;
+                
+                //now lets add some player animations
+                this.player.animations.add("left",[0,1,2,3],10,true);
+                this.player.animations.add("right",[5,6,7,8],10,true);
+                
+                //lets check if both works
+                //this.player.animations.play("left")
+                
+                
+                
+                //lets create a modified array to hold all of our platforms
+                this.platforms = game.add.group();
+                
+                //lets add physics to the platform so we can interact with it later on
+                this.platforms.enableBody = true;
+                
+                //now lets start by adding a ground at the very bottom
+                this.ground = this.game.add.sprite(0,536,"ground")
+                
+                //lets scale the ground to make it wider and a bit taller
+                this.ground.scale.setTo(2,2)
+                //basically we are saying lets make the image stretch twice the size
+                
+                //now its add this ground to the platform group
+                this.platforms.add(this.ground)
+                
+                //lets prevent the platform from falling
+                this.ground.body.allowGravity = false;
+                
+                //prevent the heavy player from pushing the ground down
+                this.ground.body.immovable = true;
+                
+                
+                //The ledge on the right
+                this.rightLedge = this.game.add.sprite(400,400,"ground");
+                
+                //The ledge on the left
+                this.leftLedge = this.game.add.sprite(-150,250,"ground")
+                
+                //have students perform the following task
+                //--- add the ledge to the platform group 
+                //--- remove gravity from the ledge 
+                //--- make it immovable
+                
+                this.platforms.add(this.rightLedge);
+                this.rightLedge.body.allowGravity = false;
+                this.rightLedge.body.immovable = true;
+                
+                this.platforms.add(this.leftLedge);
+                this.leftLedge.body.allowGravity = false;
+                this.leftLedge.body.immovable = true;
+                
+                //Lets add keyboard arrow controls
+                this.cursors = this.game.input.keyboard.createCursorKeys();
+                
+            },
+            update:function(){
+                //to perform collision detection we put the code here
+                this.game.physics.arcade.collide(this.player,this.platforms)
+                
+                //lets start moving the player
+                //the reason we are putting the code in the update function
+                //is because we need to be constantly checking if a user
+                //is pressing down on any of the arrow keys
+                
+                //START OF THE BOOLEAN LESSON
+                
+                
+                //Jumping only if the player is touching on a ground or ledge
+                 if(this.cursors.up.isDown && this.player.body.touching.down){
+                    this.player.body.velocity.y = -350;
+                }
+                
+                
+                //moving left
+                if(this.cursors.left.isDown){
+                    //Move the player to the left
+                    this.player.body.velocity.x = -150;
+                    
+                    //set the animations to play left animation
+                    this.player.animations.play("left")
+                }
+                //moving right
+                else if(this.cursors.right.isDown){
+                    this.player.body.velocity.x = 150;
+                    
+                    //set the animations to play right animation
+                    this.player.animations.play("right");
+                }else{
+                   //stop player from moving
+                    this.player.body.velocity.x = 0;
+                    //stop the animation
+                    this.player.animations.stop();
+                    //set the stading frame
+                    this.player.frame = 4;  
+                }
+                
+                
+                
+            }
+        }
+        
+    
+        var game = new Phaser.Game(800,600, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

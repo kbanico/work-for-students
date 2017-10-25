@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                
+                this.game.load.spritesheet("mario","mario.png",16, 32);
+    
+            },
+            create:function(){
+                //change the background color
+                this.game.stage.backgroundColor = "#b5eef9"
+                
+                this.player = this.game.add.sprite(100,100,"mario")                
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(600,800, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>

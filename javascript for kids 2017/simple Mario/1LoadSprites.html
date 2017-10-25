@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
+</head>
+<body>
+    <script>
+        var Game = {
+            preload:function(){
+                //today we will learn how to load a spritesheet (an image with multiple photos on it)
+                //we will need to add a name for the image in this case i called it mario
+                //we need to give the file name
+                // we also need to give it how big each frame are
+                this.game.load.spritesheet("mario","mario.png",16, 32);
+    
+            },
+            create:function(){
+                
+                //add the character to the game
+                this.player = this.game.add.sprite(100,100,"mario")
+      
+                
+            },
+            update:function(){
+
+            }
+        }
+        
+    
+        var game = new Phaser.Game(600,800, Phaser.AUTO);
+        
+        game.state.add("Game",Game);
+        game.state.start("Game");
+    </script>
+</body>
+</html>
